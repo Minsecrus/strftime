@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fafafa">
+  <meta name="description" content="拆解 C strftime 的修饰符和转换说明符，编辑 struct tm 的各个成员，实时查看格式化结果。">
+  <title>strftime.</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b1b1b'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='monospace' font-size='24' fill='%23fafafa'%3E%25%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <a class="wordmark" href="./" aria-label="strftime 首页">strftime<span>.</span></a>
+    </header>
+    <main>
+      <section class="anatomy" aria-label="strftime 转换说明">
+        <div class="inspector" id="inspector" style="--segment-color: var(--year)">
+          <h2 id="segment-title" class="sr-only">年份</h2>
+          <div class="choices" id="choices"></div>
+        </div>
+        <div class="syntax" aria-label="百分号、可选修饰符 E 或 O、一个转换说明符">
+          <div class="syntax-prefix"><span class="syntax-code">%</span><span class="token-caption">起始符</span></div>
+          <button class="token" data-segment="modifier" aria-pressed="false" aria-controls="inspector" aria-label="修饰符 E 或 O，可选"><span class="syntax-code"><span class="bracket">[</span>E<span class="bracket">|</span>O<span class="bracket">]</span></span><span class="token-caption">修饰符</span></button>
+          <button class="token is-active" data-segment="year" aria-pressed="true" aria-controls="inspector" aria-label="年份说明符"><span class="syntax-code">Y</span><span class="token-caption">年份</span></button>
+          <span class="syntax-alt" aria-hidden="true">|</span>
+          <button class="token" data-segment="month" aria-pressed="false" aria-controls="inspector" aria-label="月份说明符"><span class="syntax-code">m</span><span class="token-caption">月份</span></button>
+          <span class="syntax-alt" aria-hidden="true">|</span>
+          <button class="token" data-segment="day" aria-pressed="false" aria-controls="inspector" aria-label="日期说明符"><span class="syntax-code">d</span><span class="token-caption">日期</span></button>
+          <span class="syntax-alt" aria-hidden="true">|</span>
+          <button class="token" data-segment="week" aria-pressed="false" aria-controls="inspector" aria-label="星期说明符"><span class="syntax-code">a</span><span class="token-caption">星期</span></button>
+          <span class="syntax-alt" aria-hidden="true">|</span>
+          <button class="token" data-segment="time" aria-pressed="false" aria-controls="inspector" aria-label="时刻说明符"><span class="syntax-code">H</span><span class="token-caption">时刻</span></button>
+          <span class="syntax-alt" aria-hidden="true">|</span>
+          <button class="token" data-segment="zone" aria-pressed="false" aria-controls="inspector" aria-label="时区说明符"><span class="syntax-code">z</span><span class="token-caption">时区</span></button>
+          <span class="syntax-alt" aria-hidden="true">|</span>
+          <button class="token" data-segment="composite" aria-pressed="false" aria-controls="inspector" aria-label="组合说明符"><span class="syntax-code">c</span><span class="token-caption">组合</span></button>
+          <span class="syntax-alt" aria-hidden="true">|</span>
+          <button class="token" data-segment="char" aria-pressed="false" aria-controls="inspector" aria-label="字符说明符"><span class="syntax-code">%</span><span class="token-caption">字符</span></button>
+        </div>
+      </section>
+      <section class="playground" aria-label="格式化输出">
+        <form id="strftime-form" autocomplete="off">
+          <div class="field"><label class="field-label" for="format-input">格式化串</label><div class="input-shell"><span class="input-quote" aria-hidden="true">“</span><div class="format-editor"><div class="input-highlight" aria-hidden="true"><span id="format-highlight"></span></div><input id="format-input" value="%a %Y-%m-%d %H:%M:%S %z" placeholder="%Y-%m-%d" spellcheck="false"></div><span class="input-quote" aria-hidden="true">”</span></div></div>
+          <div class="field"><span class="field-label" id="struct-label">参数</span><div class="struct-shell" role="group" aria-labelledby="struct-label">
+            <label class="member" data-member="tm_year" style="--member-color: var(--year)"><span>tm_year</span><input name="tm_year" value="126" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_mon" style="--member-color: var(--month)"><span>tm_mon</span><input name="tm_mon" value="9" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_mday" style="--member-color: var(--day)"><span>tm_mday</span><input name="tm_mday" value="14" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_hour" style="--member-color: var(--time)"><span>tm_hour</span><input name="tm_hour" value="9" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_min" style="--member-color: var(--time)"><span>tm_min</span><input name="tm_min" value="30" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_sec" style="--member-color: var(--time)"><span>tm_sec</span><input name="tm_sec" value="0" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_wday" style="--member-color: var(--week)"><span>tm_wday</span><input name="tm_wday" value="3" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_yday" style="--member-color: var(--day)"><span>tm_yday</span><input name="tm_yday" value="286" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_isdst" style="--member-color: var(--zone)"><span>tm_isdst</span><input name="tm_isdst" value="0" placeholder="0" spellcheck="false"></label>
+            <label class="member" data-member="tm_gmtoff" style="--member-color: var(--zone)"><span>tm_gmtoff</span><input name="tm_gmtoff" value="28800" placeholder="0" spellcheck="false"></label>
+            <label class="member member-wide" data-member="tm_zone" style="--member-color: var(--zone)"><span>tm_zone</span><input name="tm_zone" value="&quot;CST&quot;" placeholder="NULL" spellcheck="false"></label>
+          </div></div>
+        </form>
+        <div class="output-panel" id="output-panel" aria-label="格式化结果"><pre id="output" aria-live="polite" aria-atomic="true">Wed 2026-10-14 09:30:00 +0800</pre><p class="output-error" id="output-error" role="status" hidden></p></div>
+      </section>
+    </main>
+  </div>
+  <div id="rule-tooltip" class="rule-tooltip" role="tooltip" hidden></div>
+</body>
+</html>
