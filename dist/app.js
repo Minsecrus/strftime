@@ -3,7 +3,7 @@ const segments = {
   modifier: { title: '修饰符', choices: [
     ['∅', '不加修饰符，按转换说明符的基本形式输出。'],
     ['E', '使用区域设置的替代表示，如年号纪年。只能用于 c、C、x、X、y、Y；区域设置没有替代表示时忽略，C 区域设置就是这样。'],
-    ['O', '使用区域设置的替代数字符号或替代月份名。只能用于 b、B、d、e、H、I、m、M、S、u、U、V、w、W、y；C 区域设置下忽略。']
+    ['O', '使用区域设置的替代数字符号或替代月份名。只能用于 b、B、d、e、H、I、m、M、S、u、U、V、w、W、y，其中 %Ob 和 %OB 是 C23 新增；C 区域设置下忽略。']
   ] },
   year: { title: '年份', choices: [
     ['Y', '完整年份，即 tm_year + 1900，如 2026。glibc 不补零，公元 999 年输出 999。'],
@@ -40,8 +40,8 @@ const segments = {
     ['p', '上午或下午。C 区域设置为 AM 或 PM，12 点起为 PM。']
   ] },
   zone: { title: '时区', choices: [
-    ['z', '与 UTC 的偏移，ISO 8601 格式，如 +0800。glibc 读取 tm_gmtoff 并舍去秒；tm_isdst 为负时不输出。'],
-    ['Z', '时区名或缩写。glibc 输出 tm_zone；它为空且 tm_isdst 不为负时，改用 TZ 环境变量的时区名，这里是 UTC。']
+    ['z', '与 UTC 的偏移，ISO 8601 格式，如 +0800。glibc 读取扩展成员 tm_gmtoff（不属于 ISO C）并舍去秒；tm_isdst 为负时不输出。'],
+    ['Z', '时区名或缩写。glibc 输出扩展成员 tm_zone（不属于 ISO C）；它为空且 tm_isdst 不为负时，改用 TZ 环境变量的时区名，这里是 UTC。']
   ] },
   composite: { title: '组合', choices: [
     ['c', '日期和时间。C 区域设置等同 %a %b %e %T %Y。'],
